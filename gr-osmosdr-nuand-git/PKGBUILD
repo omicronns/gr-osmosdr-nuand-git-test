@@ -1,0 +1,50 @@
+# Maintainer: Cameron Will <cwill747@gmail.com>
+# Contributor: Yunhui Fu <yhfudev@gmail.com>
+# Contributor: 0xfc <sfc_0@yahoo.com.cn>
+# Modified from rtl-sdr-git PKGBUILD
+
+pkgname=gr-osmosdr-nuand-git
+pkgver=27aa23
+pkgrel=1
+pkgdesc="GNU Radio source block for OsmoSDR, which is a 100% Free Software based small form-factor inexpensive SDR (Software Defined Radio) project. (Nuand fork)"
+arch=('i686' 'x86_64')
+url="https://osmocom.org/projects/gr-osmosdr/wiki"
+license=('GPL')
+depends=(
+    'gnuradio'
+    'gnuradio-iqbal'
+    'swig'
+    'libosmosdr'
+    'bladerf'
+    )
+makedepends=(
+    'git'
+    'cmake'
+    'boost'
+    'pybind11'
+    )
+rovides=('gr-osmosdr-nuand' 'gr-osmosdr' 'gnuradio-osmosdr')
+conflicts=('gr-osmosdr-nuand' 'gr-osmosdr' 'gnuradio-osmosdr')
+
+source=('git+https://github.com/Nuand/gr-osmosdr')
+md5sums=('SKIP')
+_gitname="gr-osmosdr"
+
+pkgver() {
+  cd $_gitname
+  # Use the tag of the last commit
+  git describe --always
+}
+
+build() {
+  cd "$srcdir/$_gitname"
+  mkdir -p build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=/usr ../
+  make
+}
+
+package() {
+  cd "$srcdir/$_gitname/build/"
+  make DESTDIR=${pkgdir} install
+}
